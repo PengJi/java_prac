@@ -6,7 +6,7 @@ import java.util.*;
 public class Conn2ASE {
     public static void main(String[] args) {
         try {
-            Class.forName("com.sybase.jdbc2.jdbc.SybDriver").newInstance();
+            Class.forName("com.sybase.jdbc3.jdbc.SybDriver").newInstance();
             String url = "jdbc:sybase:Tds:192.168.100.120:5000/master";// 数据库名
             Properties sysProps = System.getProperties();
             sysProps.put("user", "sa"); // 设置数据库访问用户名
