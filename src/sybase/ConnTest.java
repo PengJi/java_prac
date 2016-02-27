@@ -1,6 +1,5 @@
 package sybase;
 
-import com.sybase.jdbc3.jdbc.SybDriver;
 import java.sql.*;
 import java.util.*;
 

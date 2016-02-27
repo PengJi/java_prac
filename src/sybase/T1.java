@@ -9,14 +9,7 @@ import java.util.Properties;
 import com.sybase.jdbcx.SybDriver;
 
 public class T1 {
-
-	/**
-	 * T1.java
-	 * 
-	 * @param args
-	 */
 	public static void main(String[] args) {
-
 		try {
 			SybDriver sybDriver = (SybDriver) Class.forName("com.sybase.jdbc3.jdbc.SybDriver").newInstance();
 			sybDriver.setVersion(com.sybase.jdbcx.SybDriver.VERSION_5);
@@ -35,7 +28,7 @@ public class T1 {
 			// TODO 自动生成 catch 块
 			e.printStackTrace();
 		}
-		//String url = " jdbc:sybase:Tds:192.168.100.120:5000/master";
+		//String url = " jdbc:sybase:Tds:192.168.100.120:5000";
 		String url = " jdbc:sybase:Tds:192.168.100.120:5000/master";
 		Properties sysProps = System.getProperties();
 		sysProps.put("user", "sa");
@@ -45,7 +38,7 @@ public class T1 {
 			Connection conn = DriverManager.getConnection(url, "sa","560128");
 			Statement stmt = null;
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select * from spt_datatype_info");
+			ResultSet rs = stmt.executeQuery("select id,name,crdate from dbo.sysobjects where type='U'");
 			System.out.println("<-");
 
 			while (rs.next())

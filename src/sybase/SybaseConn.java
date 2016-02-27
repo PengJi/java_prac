@@ -1,8 +1,7 @@
+package sybase;
+
 import java.sql.*; // JDBC
-import com.sybase.jdbc.*; // Sybase jConnect
 import java.util.Properties; // Properties
-import sybase.sql.*; // Sybase utilities
-import asademo.*; // Example classes
 
 /*
  * http://infocenter.sybase.com/archive/index.jsp?topic=/com.sybase.infocenter.dc00170.1260/html/iqapg/iqapg917.htm
@@ -10,9 +9,7 @@ import asademo.*; // Example classes
 
 public class SybaseConn {
 	private static Connection conn;
-
 	public static void main(String args[]) {
-
 		conn = null;
 		String machineName;
 		if (args.length != 1) {
@@ -27,7 +24,7 @@ public class SybaseConn {
 		} else {
 			System.out.println("Connection failed");
 		}
-
+		/*
 		try {
 			serializeVariable();
 			serializeColumn();
@@ -36,28 +33,24 @@ public class SybaseConn {
 			System.out.println("Error: " + e.getMessage());
 			e.printStackTrace();
 		}
+		*/
 	}
-
 	private static void ASAConnect(String UserID, String Password, String Machinename) {
 		// uses global Connection variable
-
 		String _coninfo = new String(Machinename);
-
 		Properties _props = new Properties();
 		_props.put("user", UserID);
 		_props.put("password", Password);
-
 		// Load the Sybase Driver
 		try {
-			Class.forName("com.sybase.jdbc.SybDriver").newInstance();
-
+			Class.forName("com.sybase.jdbc3.jdbc.SybDriver").newInstance();
 			StringBuffer temp = new StringBuffer();
 			// Use the Sybase jConnect driver...
 			temp.append("jdbc:sybase:Tds:");
 			// to connect to the supplied machine name...
 			temp.append(_coninfo);
 			// on the default port number for ASA...
-			temp.append(":2638");
+			temp.append(":5000");
 			// and connect.
 			System.out.println(temp.toString());
 			conn = DriverManager.getConnection(temp.toString(), _props);
