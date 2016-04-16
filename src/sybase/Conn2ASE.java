@@ -1,5 +1,3 @@
-package sybase;
-
 import java.sql.*; 
 import java.util.*;
 import java.io.BufferedOutputStream;
@@ -30,9 +28,9 @@ public class Conn2ASE {
 			e.printStackTrace();
 		}finally{
 			try {
-				outputStream.close();
 				bufferedOutputStream.flush();
 				bufferedOutputStream.close();
+				outputStream.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -68,24 +66,32 @@ public class Conn2ASE {
 				e2.printStackTrace();
 			}
 		}
+		System.out.println(stringBuffer);
 	}
 	
 	//得到表
 	public static String getTable(String user,String passwd,String dbString,String tableName){
-		String tables = null;
+		String tables = "";
 		try {
 			Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
 			String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbString;
 			Properties sysProps = System.getProperties();
-            sysProps.put("user", user); 
-            sysProps.put("password", passwd);
-            Connection conn = DriverManager.getConnection(url, sysProps);
-            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-            String sql = "select * from " + tableName; //查询表
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-				tables = tables + "oject_id:"+rs.getString(1)+",oject_name:"+rs.getString(2);
-            }
+			sysProps.put("user", user); 
+			sysProps.put("password", passwd);
+			Connection conn = DriverManager.getConnection(url, sysProps);
+			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			String sql = "select * from " + tableName; //查询表
+			ResultSet rs = stmt.executeQuery(sql);
+			int columnSize = rs.getFetchSize();
+			String str = "";
+			while (rs.next()) {
+				for(int i=0;i<columnSize;i++){
+					str = str + rs.getString(i) + " ";
+				}
+				//tables = tables + "oject_id:" + rs.getString(1) + ",oject_name:" + rs.getString(2) + "\n";
+				tables = tables + str + "\n";
+				str = "";
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -122,6 +128,7 @@ public class Conn2ASE {
         dbTableName = "sysobjects";
         fs = "/home/sybase/test.txt";
         String tableStr = getTable(dbUser, dbPasswd, dbName, dbTableName);
+	//System.out.println(tableStr);
         write(fs,tableStr);
         read(fs);
     }
