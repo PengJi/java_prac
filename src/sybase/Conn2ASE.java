@@ -82,17 +82,22 @@ public class Conn2ASE {
 			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			String sql = "select * from " + tableName; //查询表
 			ResultSet rs = stmt.executeQuery(sql);
+			int columnSize = rs.getMetaData().getColumnCount();
 			String str = "";
-			int i = 1;
 			while (rs.next()) {
+				/*
 				while(rs.getString(i) != null){
 					str = str + rs.getString(i) + " ";
 					i++;
 				}
+				*/
+				for(int i=1;i<=columnSize;i++){
+					str = str + rs.getString(i) + "\t";
+				}
+				
 				//tables = tables + "oject_id:" + rs.getString(1) + ",oject_name:" + rs.getString(2) + "\n";
 				tables = tables + str + "\n";
 				str = "";
-				i=1;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
