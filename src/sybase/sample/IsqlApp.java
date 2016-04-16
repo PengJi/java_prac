@@ -1,3 +1,5 @@
+package sybase.sample;
+
 /*
  Copyright Notice and Disclaimer
  -------------------------------
@@ -48,9 +50,14 @@ public class IsqlApp
     static final int DB_BASE_ERR = 11; 
 
     static final String TAG_SEPARATOR = ":";
+    /*
     static final String DEFAULT_USER = "guest";
     static final String DEFAULT_PASSWORD = "sybase";
     static final String DEFAULT_SERVER = "jdbc:sybase:Tds:jdbc.sybase.com:4444";
+    */
+    static final String DEFAULT_USER = "sa";
+    static final String DEFAULT_PASSWORD = "560128";
+    static final String DEFAULT_SERVER = "192.168.100.120:5000";
 
     static Connection _con = null;
     static Statement _stmt = null;

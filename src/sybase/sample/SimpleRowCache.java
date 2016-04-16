@@ -44,7 +44,7 @@ import java.util.Enumeration;
  * @author  Eric Giguere
  * @version 1.01, 03 Jul 1997
  */
-public final class SimpleRowCache implements  sample2.DataRowCache
+public final class SimpleRowCache implements  sybase.sample.DataRowCache
 {
     /** Container used to store the rows */
     private Vector _rowList = null;
