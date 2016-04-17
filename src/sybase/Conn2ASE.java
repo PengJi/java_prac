@@ -94,6 +94,9 @@ public class Conn2ASE {
 					str = "";
 				}
 			}
+			rs.close();
+			stmt.close();
+			conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,6 +104,72 @@ public class Conn2ASE {
 		return tables;
 	}
 	
+	// 得到表字段
+	public static String getTableColumns(String tableName){
+		String tables = "";
+		try {
+			Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
+			String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbName;
+			Properties sysProps = System.getProperties();
+			sysProps.put("user", dbUser); 
+			sysProps.put("password", dbPasswd);
+			Connection conn = DriverManager.getConnection(url, sysProps);
+			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			String sql = "select * from " + tableName; //查询表
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData metaData=rs.getMetaData(); 
+			int columnSize = metaData.getColumnCount();//获取总的列数
+			String str = "";
+			while(rs.next()){
+				for(int i=1;i<=columnSize;i++){
+					str = str + rs.getString(i) + "\t";
+				}
+				tables = tables + str + "\n";
+				str = "";
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return tables;
+	}
+
+	// 得到表(字段)备注
+	public static String getTableComments(String tableName){
+		String tables = "";
+		try {
+			Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
+			String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbName;
+			Properties sysProps = System.getProperties();
+			sysProps.put("user", dbUser); 
+			sysProps.put("password", dbPasswd);
+			Connection conn = DriverManager.getConnection(url, sysProps);
+			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			String sql = "select * from " + tableName; //查询表
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData metaData=rs.getMetaData(); 
+			int columnSize = metaData.getColumnCount();//获取总的列数
+			String str = "";
+			while(rs.next()){
+				for(int i=1;i<=columnSize;i++){
+					str = str + rs.getString(i) + "\t";
+				}
+				tables = tables + str + "\n";
+				str = "";
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return tables;
+	}
+
     public static void main(String[] args) {
     	/*
         try {
@@ -127,11 +196,26 @@ public class Conn2ASE {
         dbUser = "sa";
         dbPasswd = "jipeng1008";
         dbName = "test";
+
         dbTableName = "sysobjects";
-        fs = "/home/sybase/java_prac/src/sybase/test.txt";
+        fs = "/home/sybase/java_prac/src/sybase/tables.txt";
+		//得到表信息
         String tableStr = getTable(dbTableName);
-		//System.out.println(tableStr);
         write(fs,tableStr);
         read(fs);
+
+		dbTableName = "syscolumns";
+		fs = "/home/sybase/java_prac/src/sybase/tableColumns.txt";
+		//得到表字段
+		String tableColumns = getTableColumns(dbTableName);
+		write(fs,tableColumns);
+		read(fs);
+
+		dbTableName = "syscomments";
+		fs = "/home/sybase/java_prac/src/sybase/tableComments.txt";
+		//得到表字段
+		String tableComments = getTableComments(dbTableName);
+		write(fs,tableColumns);
+		read(fs);
     }
 }
