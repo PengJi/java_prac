@@ -82,15 +82,9 @@ public class Conn2ASE {
 			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			String sql = "select * from " + tableName; //查询表
 			ResultSet rs = stmt.executeQuery(sql);
-			int columnSize = rs.getMetaData().getColumnCount();
+			int columnSize = rs.getMetaData().getColumnCount();//获取总的列数
 			String str = "";
 			while (rs.next()) {
-				/*
-				while(rs.getString(i) != null){
-					str = str + rs.getString(i) + " ";
-					i++;
-				}
-				*/
 				for(int i=1;i<=columnSize;i++){
 					str = str + rs.getString(i) + "\t";
 				}
@@ -131,7 +125,7 @@ public class Conn2ASE {
         
         dbUser = "sa";
         dbPasswd = "jipeng1008";
-        dbName = "sybsystemdb";
+        dbName = "test";
         dbTableName = "sysobjects";
         fs = "/home/sybase/test.txt";
         String tableStr = getTable(dbUser, dbPasswd, dbName, dbTableName);
