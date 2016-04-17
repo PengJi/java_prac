@@ -82,16 +82,17 @@ public class Conn2ASE {
 			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			String sql = "select * from " + tableName; //查询表
 			ResultSet rs = stmt.executeQuery(sql);
-			int columnSize = rs.getMetaData().getColumnCount();//获取总的列数
+			ResultSetMetaData metaData=rs.getMetaData(); 
+			int columnSize = metaData.getColumnCount();//获取总的列数
 			String str = "";
 			while (rs.next()) {
+				if(rs.getString(4).toString() == "U"){
 				for(int i=1;i<=columnSize;i++){
 					str = str + rs.getString(i) + "\t";
 				}
-				
-				//tables = tables + "oject_id:" + rs.getString(1) + ",oject_name:" + rs.getString(2) + "\n";
 				tables = tables + str + "\n";
 				str = "";
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,9 +128,9 @@ public class Conn2ASE {
         dbPasswd = "jipeng1008";
         dbName = "test";
         dbTableName = "sysobjects";
-        fs = "/home/sybase/test.txt";
+        fs = "/home/sybase/java_prac/src/sybase/test.txt";
         String tableStr = getTable(dbUser, dbPasswd, dbName, dbTableName);
-	//System.out.println(tableStr);
+		//System.out.println(tableStr);
         write(fs,tableStr);
         read(fs);
     }
