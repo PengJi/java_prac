@@ -85,13 +85,14 @@ public class Conn2ASE {
 			ResultSetMetaData metaData=rs.getMetaData(); 
 			int columnSize = metaData.getColumnCount();//获取总的列数
 			String str = "";
-			while (rs.next()) {
-				if(rs.getString(4).toString() == "U"){
-				for(int i=1;i<=columnSize;i++){
-					str = str + rs.getString(i) + "\t";
-				}
-				tables = tables + str + "\n";
-				str = "";
+			while(rs.next()){
+				System.out.println(rs.getString(4));
+				if(rs.getString(4).trim().equals("U")){
+					for(int i=1;i<=columnSize;i++){
+						str = str + rs.getString(i) + "\t";
+					}
+					tables = tables + str + "\n";
+					str = "";
 				}
 			}
 		} catch (Exception e) {
