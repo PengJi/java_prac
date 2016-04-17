@@ -68,6 +68,11 @@ public class Conn2ASE {
 		}
 		System.out.println(stringBuffer);
 	}
+
+	//得到连接
+	public static Connection getConn(){
+		
+	}
 	
 	//得到表
 	public static String getTable(String tableName){
