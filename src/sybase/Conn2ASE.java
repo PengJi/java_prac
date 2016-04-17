@@ -71,17 +71,18 @@ public class Conn2ASE {
 
 	//得到连接
 	public static Connection getConn(){
+		Connection conn = null;
 		try {
 			Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
 			String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbName;
 			Properties sysProps = System.getProperties();
 			sysProps.put("user", dbUser); 
 			sysProps.put("password", dbPasswd);
-			Connection conn = DriverManager.getConnection(url, sysProps);
-			return conn;
+			conn = DriverManager.getConnection(url, sysProps);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return conn;
 	}
 	
 	//得到表
