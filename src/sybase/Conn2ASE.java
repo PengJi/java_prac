@@ -70,14 +70,14 @@ public class Conn2ASE {
 	}
 	
 	//得到表
-	public static String getTable(String user,String passwd,String dbString,String tableName){
+	public static String getTable(String tableName){
 		String tables = "";
 		try {
 			Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
-			String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbString;
+			String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbName;
 			Properties sysProps = System.getProperties();
-			sysProps.put("user", user); 
-			sysProps.put("password", passwd);
+			sysProps.put("user", dbUser); 
+			sysProps.put("password", dbPasswd);
 			Connection conn = DriverManager.getConnection(url, sysProps);
 			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			String sql = "select * from " + tableName; //查询表
@@ -86,7 +86,6 @@ public class Conn2ASE {
 			int columnSize = metaData.getColumnCount();//获取总的列数
 			String str = "";
 			while(rs.next()){
-				System.out.println(rs.getString(4));
 				if(rs.getString(4).trim().equals("U")){
 					for(int i=1;i<=columnSize;i++){
 						str = str + rs.getString(i) + "\t";
@@ -130,7 +129,7 @@ public class Conn2ASE {
         dbName = "test";
         dbTableName = "sysobjects";
         fs = "/home/sybase/java_prac/src/sybase/test.txt";
-        String tableStr = getTable(dbUser, dbPasswd, dbName, dbTableName);
+        String tableStr = getTable(dbTableName);
 		//System.out.println(tableStr);
         write(fs,tableStr);
         read(fs);
