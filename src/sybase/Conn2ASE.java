@@ -71,14 +71,17 @@ public class Conn2ASE {
 
 	//得到连接
 	public static Connection getConn(){
-		Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
-		String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbName;
-		Properties sysProps = System.getProperties();
-		sysProps.put("user", dbUser); 
-		sysProps.put("password", dbPasswd);
-		Connection conn = DriverManager.getConnection(url, sysProps);
-		
-		return conn;
+		try {
+			Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
+			String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbName;
+			Properties sysProps = System.getProperties();
+			sysProps.put("user", dbUser); 
+			sysProps.put("password", dbPasswd);
+			Connection conn = DriverManager.getConnection(url, sysProps);
+			return conn;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	//得到表
