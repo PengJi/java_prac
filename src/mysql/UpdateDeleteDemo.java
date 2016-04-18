@@ -1,4 +1,3 @@
-//修改删除数据
 import java.sql.*;
 
 public class UpdateDeleteDemo {
