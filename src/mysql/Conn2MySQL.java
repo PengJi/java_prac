@@ -141,7 +141,6 @@ public class Conn2MySQL{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return n;
 	}
 	
@@ -171,7 +170,6 @@ public class Conn2MySQL{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return n;
 	}
 
@@ -199,7 +197,6 @@ public class Conn2MySQL{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return n;
 	}
 	
@@ -228,7 +225,6 @@ public class Conn2MySQL{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return n;
 	}
 
@@ -254,7 +250,6 @@ public class Conn2MySQL{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return n;
 	}
 	

@@ -69,7 +69,10 @@ public class Conn2ASE {
 		System.out.println(stringBuffer);
 	}
 
-	//得到连接
+	/*
+	 * 获得连接对象
+	 * @return 连接对象
+	 */
 	public static Connection getConn(){
 		Connection conn = null;
 		try {
@@ -85,7 +88,11 @@ public class Conn2ASE {
 		return conn;
 	}
 	
-	//查询表
+	/*
+	 * 查询表的内容
+	 * @param tableName 表名
+	 * @return 表的内容
+	 */
 	public static String getTable(String tableName){
 		String tables = "";
 		try {
@@ -115,7 +122,11 @@ public class Conn2ASE {
 		return tables;
 	}
 	
-	// 得到表字段
+	/*
+	 * 查询表的字段
+	 * @param tableName 表名
+	 * @return 表字段
+	 */
 	public static String getTableColumns(String tableName){
 		String tables = "";
 		try {
@@ -143,7 +154,11 @@ public class Conn2ASE {
 		return tables;
 	}
 
-	// 得到表(字段)备注
+	/*
+	 * 查询表备注
+	 * @param tableName 表名
+	 * @return 表备注
+	 */
 	public static String getTableComments(String tableName){
 		String tables = "";
 		try {
