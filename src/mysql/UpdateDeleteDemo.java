@@ -1,4 +1,9 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
 
 public class UpdateDeleteDemo {
 	public static void main(String[] args)throws Exception{
@@ -34,7 +39,7 @@ public class UpdateDeleteDemo {
 		pst = conn.prepareStatement(sql3);
 		pst.setInt(1,701);
 		pst.executeUpdate();
-            
+
 		ResultSet rs2 = stmt.executeQuery(sql);//创建数据对象
 		System.out.println("编号"+"\t"+"姓名"+"\t"+"年龄");
 		while (rs.next()){
