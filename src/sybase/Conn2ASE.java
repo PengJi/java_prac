@@ -85,7 +85,7 @@ public class Conn2ASE {
 		return conn;
 	}
 	
-	//得到表
+	//查询表
 	public static String getTable(String tableName){
 		String tables = "";
 		try {
