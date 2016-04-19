@@ -7,12 +7,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 
+import mysql.Conn2MySQL;
+
 public class Conn2ASE {
 	public static String dbUser = null;
 	public static String dbPasswd = null;
 	public static String dbName = null;
 	public static String dbTableName = null;
 	public static String fs = null;
+    public static ArrayList<String> arrayList = new ArrayList<String>();
 	
 	//写文件
 	public static void write(String filepath,String content){
@@ -91,7 +94,7 @@ public class Conn2ASE {
 	/*
 	 * 查询表的内容
 	 * @param tableName 表名
-	 * @return 表的内容
+	 * @return 字符串，表的内容
 	 */
 	public static String getTable(String tableName){
 		String tables = "";
@@ -108,6 +111,39 @@ public class Conn2ASE {
 					for(int i=1;i<=columnSize;i++){
 						str = str + rs.getString(i) + "\t";
 					}
+					tables = tables + str + "\n";
+					str = "";
+				}
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return tables;
+	}
+	
+	/*
+	 * 查询表的内容
+	 * @param tableName 表名
+	 * @return 字符串，表的内容
+	 */
+	public static String getTableSpec(String tableName){
+		String tables = "";
+		try {
+			Connection conn = getConn();
+			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			String sql = "select * from " + tableName; //查询表
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData metaData=rs.getMetaData(); 
+			int columnSize = metaData.getColumnCount();//获取总的列数
+			String str = "";
+			while(rs.next()){
+				if(rs.getString(4).trim().equals("U")){
+					str = str + rs.getString(1) + "\t" + rs.getString(3) + "\t";
+					arrayList.add(str);
 					tables = tables + str + "\n";
 					str = "";
 				}
@@ -212,6 +248,8 @@ public class Conn2ASE {
         dbUser = "sa";
         dbPasswd = "jipeng1008";
         dbName = "test";
+        String str;
+        String[] strs; 
 
         dbTableName = "sysobjects";
         fs = "/home/sybase/java_prac/src/sybase/tables.txt";
@@ -219,19 +257,34 @@ public class Conn2ASE {
         String tableStr = getTable(dbTableName);
         write(fs,tableStr);
         read(fs);
+        
+        dbTableName = "sysobjects";
+        fs = "/home/sybase/java_prac/src/sybase/tablesspec.txt";
+		//得到表信息
+        String tableStrSpec = getTableSpec(dbTableName);
+        write(fs,tableStrSpec);
+        read(fs);
+        //写入mysql
+        Conn2MySQL conn2MySQL = new Conn2MySQL("root","root","test","table_infos");
+        Iterator<String> iter = arrayList.iterator();
+        while(iter.hasNext()){
+        	str = iter.next();
+        	strs = str.split("\\t");
+        }
+        conn2MySQL.insertTable(strs[0], strs[1], null);
 
 		dbTableName = "syscolumns";
 		fs = "/home/sybase/java_prac/src/sybase/tableColumns.txt";
 		//得到表字段
 		String tableColumns = getTableColumns(dbTableName);
 		write(fs,tableColumns);
-		read(fs);
+		//read(fs);
 
 		dbTableName = "syscomments";
 		fs = "/home/sybase/java_prac/src/sybase/tableComments.txt";
 		//得到表字段
 		String tableComments = getTableComments(dbTableName);
 		write(fs,tableColumns);
-		read(fs);
+		//read(fs);
     }
 }

@@ -19,9 +19,16 @@ public class Conn2MySQL{
     public static String dbName = null;
     public static String dbTableName = null;
     public static String fs = null;
+    
+    public Conn2MySQL(String user,String passwd,String name,String tableName){
+    	dbUser = user;
+    	dbPasswd = passwd;
+    	dbName = name;
+    	dbTableName = tableName;
+    }
 
     //写文件
-    public static void write(String filepath,String content){
+    public void write(String filepath,String content){
         FileOutputStream outputStream = null;
         BufferedOutputStream bufferedOutputStream = null;
         File file = new File(filepath);
@@ -44,7 +51,7 @@ public class Conn2MySQL{
     }
 
     //读文件
-    public static void read(String filepath){
+    public void read(String filepath){
         BufferedInputStream bufferedInputStream = null;
         StringBuffer stringBuffer = new StringBuffer();
         File file = new File(filepath);
@@ -79,12 +86,12 @@ public class Conn2MySQL{
      * 得到数据库连接
      * @return 返回连接对象
      */
-    public static Connection getConn(){
+    public Connection getConn(){
     	Connection conn = null;
     	try {
     		Class.forName("com.mysql.jdbc.Driver");
     		String url="jdbc:mysql://192.168.101.8:3306/" + dbName;    //JDBC的URL    
-    		conn = DriverManager.getConnection(url,"root","root");
+    		conn = DriverManager.getConnection(url,dbUser,dbPasswd);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -96,7 +103,7 @@ public class Conn2MySQL{
 	 * @param tableName 表名
 	 * @return
 	 */
-	public static void selectTable(String tableName){
+	public void selectTable(String tableName){
 		try {
 			Connection conn = getConn();
 			Statement stmt = conn.createStatement(); //创建Statement对象
@@ -123,16 +130,17 @@ public class Conn2MySQL{
 	 * @param nameStr 表名
 	 * @param desStr 表的描述
 	 */
-	public static int insertTable(String nameStr,String desStr){
+	public int insertTable(String nameStr,String sid,String desStr){
 		int n = 0;
 		try {
 			Connection conn = getConn();
 			Statement stmt = conn.createStatement(); //创建Statement对象
-			String sql2 = "INSERT INTO table_infos (name, description,created_at,updated_at) "
+			String sql2 = "INSERT INTO table_infos (name,sybid,description,created_at,updated_at) "
 					+ "VALUES (?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 			PreparedStatement pst = conn.prepareStatement(sql2);
 			pst.setString(1,nameStr);
-			pst.setString(2,desStr);
+			pst.setString(2,sid);
+			pst.setString(3,desStr);
 			pst.executeUpdate();
 			
 			pst.close();
@@ -151,7 +159,7 @@ public class Conn2MySQL{
 	 * @param pid 属性属于的表id
 	 * @return 影响的行数
 	 */
-	public static int insertAttr(String attrName,String desStr,int pid){
+	public int insertAttr(String attrName,String desStr,int pid){
 		int n = 0;
 		try {
 			Connection conn = getConn();
@@ -179,7 +187,7 @@ public class Conn2MySQL{
 	 * @param nameStr 表名称
 	 * @param desStr 表的描述
 	 */
-	public static int updateTable(int tid,String nameStr,String desStr){
+	public int updateTable(int tid,String nameStr,String desStr){
 		int n = 0;
 		try {
 			Connection conn = getConn();
@@ -207,7 +215,7 @@ public class Conn2MySQL{
 	 * @param desStr 属性描述
 	 * @return 影响的函数
 	 */
-	public static int updateAttr(int aid,String nameStr,String desStr){
+	public int updateAttr(int aid,String nameStr,String desStr){
 		int n = 0;
 		try {
 			Connection conn = getConn();
@@ -233,7 +241,7 @@ public class Conn2MySQL{
 	 * @param tid 表id
 	 * @return 影响的函数
 	 */
-	public static int deleteTable(int tid){
+	public int deleteTable(int tid){
 		int n = 0;
 		try {
 			Connection conn = getConn();
@@ -258,7 +266,7 @@ public class Conn2MySQL{
 	 * @param aid 表属性id
 	 * @return 影响的函数
 	 */
-	public static int deleteAttr(int aid){
+	public int deleteAttr(int aid){
 		int n = 0;
 		try {
 			Connection conn = getConn();
@@ -285,7 +293,8 @@ public class Conn2MySQL{
         int n = 0;
         
         dbTableName = "table_infos";
-        selectTable(dbTableName);
+        Conn2MySQL conn2MySQL = new Conn2MySQL(dbUser, dbPasswd, dbName, dbTableName);
+        conn2MySQL.selectTable(dbTableName);
         /*
         //插入一条表记录
         insertTable("test10","jdbc测试");
