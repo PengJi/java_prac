@@ -7,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 
-import mysql.Conn2MySQL;
-
 public class Conn2ASE {
 	public static String dbUser = null;
 	public static String dbPasswd = null;
@@ -142,7 +140,7 @@ public class Conn2ASE {
 			String str = "";
 			while(rs.next()){
 				if(rs.getString(4).trim().equals("U")){
-					str = str + rs.getString(1) + "\t" + rs.getString(3) + "\t";
+					str = str + rs.getString(1) + "\t" + rs.getString(2) + "\t";
 					arrayList.add(str);
 					tables = tables + str + "\n";
 					str = "";
@@ -249,7 +247,7 @@ public class Conn2ASE {
         dbPasswd = "jipeng1008";
         dbName = "test";
         String str;
-        String[] strs; 
+        String[] strs = new String[2];
 
         dbTableName = "sysobjects";
         fs = "/home/sybase/java_prac/src/sybase/tables.txt";
@@ -270,8 +268,9 @@ public class Conn2ASE {
         while(iter.hasNext()){
         	str = iter.next();
         	strs = str.split("\\t");
+			System.out.println(strs[0]);
+	        conn2MySQL.insertTable(strs[0], strs[1], null);
         }
-        conn2MySQL.insertTable(strs[0], strs[1], null);
 
 		dbTableName = "syscolumns";
 		fs = "/home/sybase/java_prac/src/sybase/tableColumns.txt";
