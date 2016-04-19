@@ -11,12 +11,17 @@ public class Conn2ASE {
 	public static String dbUser = null;
 	public static String dbPasswd = null;
 	public static String dbName = null;
-	public static String dbTableName = null;
 	public static String fs = null;
     public static ArrayList<String> arrayList = new ArrayList<String>();
+    
+    public Conn2ASE(String user,String passwd,String name){
+    	dbUser = user;
+    	dbPasswd = passwd;
+    	dbName = name;
+    }
 	
 	//写文件
-	public static void write(String filepath,String content){
+	public void write(String filepath,String content){
 		FileOutputStream outputStream = null;
 		BufferedOutputStream bufferedOutputStream = null;
 		File file = new File(filepath);
@@ -39,7 +44,7 @@ public class Conn2ASE {
 	}
 	
 	//读文件
-	public static void read(String filepath){
+	public void read(String filepath){
 		BufferedInputStream bufferedInputStream = null;
 		StringBuffer stringBuffer = new StringBuffer();
 		File file = new File(filepath);
@@ -74,7 +79,7 @@ public class Conn2ASE {
 	 * 获得连接对象
 	 * @return 连接对象
 	 */
-	public static Connection getConn(){
+	public Connection getConn(){
 		Connection conn = null;
 		try {
 			Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
@@ -90,11 +95,11 @@ public class Conn2ASE {
 	}
 	
 	/*
-	 * 查询表的内容
+	 * 查询表的总内容
 	 * @param tableName 表名
 	 * @return 字符串，表的内容
 	 */
-	public static String getTable(String tableName){
+	public String getTable(String tableName){
 		String tables = "";
 		try {
 			Connection conn = getConn();
@@ -124,11 +129,11 @@ public class Conn2ASE {
 	}
 	
 	/*
-	 * 查询表的内容
+	 * 查询表的特定列内容
 	 * @param tableName 表名
 	 * @return 字符串，表的内容
 	 */
-	public static String getTableSpec(String tableName){
+	public String getTableSpec(String tableName){
 		String tables = "";
 		try {
 			Connection conn = getConn();
@@ -157,11 +162,35 @@ public class Conn2ASE {
 	}
 	
 	/*
+	 * 向table_infos插入表信息
+	 * @return 返回影响的行数
+	 */
+	public int insertTableSpec(){
+		int n=0;
+        String dbTableName = "sysobjects";
+        String str;
+        String[] strs = new String[2];
+        fs = "/home/sybase/java_prac/src/sybase/tablesspec.txt";
+        String tableStrSpec = getTableSpec(dbTableName);
+        write(fs,tableStrSpec);
+        read(fs);
+        //写入mysql
+        Conn2MySQL conn2MySQL = new Conn2MySQL("root","root","test","table_infos");
+        Iterator<String> iter = arrayList.iterator();
+        while(iter.hasNext()){
+        	str = iter.next();
+        	strs = str.split("\\t");
+        }
+        n = conn2MySQL.insertTable(strs[0], strs[1], null);
+        return n;
+	}
+	
+	/*
 	 * 查询表的字段
 	 * @param tableName 表名
 	 * @return 表字段
 	 */
-	public static String getTableColumns(String tableName){
+	public String getTableColumns(String tableName){
 		String tables = "";
 		try {
 			Connection conn = getConn();
@@ -193,7 +222,7 @@ public class Conn2ASE {
 	 * @param tableName 表名
 	 * @return 表备注
 	 */
-	public static String getTableComments(String tableName){
+	public String getTableComments(String tableName){
 		String tables = "";
 		try {
 			Connection conn = getConn();
@@ -221,69 +250,32 @@ public class Conn2ASE {
 	}
 
     public static void main(String[] args) {
-    	/*
-        try {
-            Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
-            String url = "jdbc:sybase:Tds:192.168.101.62:5000/master";// 数据库名
-            Properties sysProps = System.getProperties();
-            sysProps.put("user", "sa"); // 设置数据库访问用户名
-            sysProps.put("password", "jipeng1008"); // 密码
-            Connection conn = DriverManager.getConnection(url, sysProps);
-            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-            String sql = "select id,name,crdate from dbo.sysobjects where type='U'"; // 表
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-				System.out.println("oject_id:"+rs.getString(1)+",oject_name:"+rs.getString(2)); // 取得第二列的值
-            }
-			rs.close();
-			stmt.close();
-			conn.close();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        */
-        
-        dbUser = "sa";
-        dbPasswd = "jipeng1008";
-        dbName = "test";
-        String str;
-        String[] strs = new String[2];
+    	String dbTableName;
+    	String fs;
+        Conn2ASE conn2ase = new Conn2ASE("sa", "jipeng1008", "test");
 
+		//得到表信息
         dbTableName = "sysobjects";
         fs = "/home/sybase/java_prac/src/sybase/tables.txt";
-		//得到表信息
-        String tableStr = getTable(dbTableName);
-        write(fs,tableStr);
-        read(fs);
-        
-        dbTableName = "sysobjects";
-        fs = "/home/sybase/java_prac/src/sybase/tablesspec.txt";
-		//得到表信息
-        String tableStrSpec = getTableSpec(dbTableName);
-        write(fs,tableStrSpec);
-        read(fs);
-        //写入mysql
-        Conn2MySQL conn2MySQL = new Conn2MySQL("root","root","test","table_infos");
-        Iterator<String> iter = arrayList.iterator();
-        while(iter.hasNext()){
-        	str = iter.next();
-        	strs = str.split("\\t");
-			System.out.println(strs[0]);
-	        conn2MySQL.insertTable(strs[0], strs[1], null);
-        }
+        String tableStr = conn2ase.getTable(dbTableName);
+        conn2ase.write(fs,tableStr);
+        conn2ase.read(fs);
 
+		//得到表字段
 		dbTableName = "syscolumns";
 		fs = "/home/sybase/java_prac/src/sybase/tableColumns.txt";
-		//得到表字段
-		String tableColumns = getTableColumns(dbTableName);
-		write(fs,tableColumns);
-		//read(fs);
+		String tableColumns = conn2ase.getTableColumns(dbTableName);
+		conn2ase.write(fs,tableColumns);
+		//conn2ase.read(fs);
 
+		//得到表字段
 		dbTableName = "syscomments";
 		fs = "/home/sybase/java_prac/src/sybase/tableComments.txt";
-		//得到表字段
-		String tableComments = getTableComments(dbTableName);
-		write(fs,tableColumns);
-		//read(fs);
+		String tableComments = conn2ase.getTableComments(dbTableName);
+		conn2ase.write(fs,tableColumns);
+		//conn2ase.read(fs);
+		
+		//插入表数据
+		conn2ase.insertTableSpec();
     }
 }
