@@ -184,22 +184,26 @@ public class Conn2ASE {
         //写入mysql
         Conn2MySQL conn2MySQL = new Conn2MySQL("root","root","test","table_infos");
         Iterator<String> iter = arrayList.iterator();
-        while(iter.hasNext()){
-        	str = iter.next();
-        	strs = str.split("\\t");
-        	n = conn2MySQL.insertTable(strs[0], strs[1], null);
-        	sql = "select name from syscolumns where id = " + strs[1];
-        	ResultSet rs = stmt.executeQuery(sql);
-        	ResultSet keyrs = stmt.getGeneratedKeys();
-        	if(keyrs.next()){
-        		sid = keyrs.getInt(1);
-        	}
-        	while(rs.next()){
-        		nameStr = rs.getString(1);
-        		conn2MySQL.insertAttr(nameStr, null, sid );
-        	}
-        	if(n == 0) break;
-        }
+        try {
+            while(iter.hasNext()){
+            	str = iter.next();
+            	strs = str.split("\\t");
+            	n = conn2MySQL.insertTable(strs[0], strs[1], null);
+            	sql = "select name from syscolumns where id = " + strs[1];
+            	ResultSet rs = stmt.executeQuery(sql);
+            	ResultSet keyrs = stmt.getGeneratedKeys();
+            	if(keyrs.next()){
+            		sid = keyrs.getInt(1);
+            	}
+            	while(rs.next()){
+            		nameStr = rs.getString(1);
+            		conn2MySQL.insertAttr(nameStr, null, sid );
+            	}
+            	if(n == 0) break;
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         return n;
 	}
 	
