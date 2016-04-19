@@ -141,7 +141,7 @@ public class Conn2MySQL{
 			pst.setString(1,nameStr);
 			pst.setString(2,sid);
 			pst.setString(3,desStr);
-			pst.executeUpdate();
+			n = pst.executeUpdate();
 			
 			pst.close();
 	        stmt.close();
