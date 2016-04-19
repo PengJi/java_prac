@@ -1,5 +1,3 @@
-package mysql;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -136,7 +134,7 @@ public class Conn2MySQL{
 			Connection conn = getConn();
 			Statement stmt = conn.createStatement(); //创建Statement对象
 			String sql2 = "INSERT INTO table_infos (name,sybid,description,created_at,updated_at) "
-					+ "VALUES (?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
+					+ "VALUES (?,?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 			PreparedStatement pst = conn.prepareStatement(sql2);
 			pst.setString(1,nameStr);
 			pst.setString(2,sid);
