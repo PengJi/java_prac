@@ -171,8 +171,6 @@ public class Conn2ASE {
 	 */
 	public int insertTableSpec(){
 		int n=0;
-		Connection conn = getConn();
-		Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 		String str,sql,nameStr;
 		int sid = 0;
         String dbTableName = "sysobjects";
@@ -185,6 +183,8 @@ public class Conn2ASE {
         Conn2MySQL conn2MySQL = new Conn2MySQL("root","root","test","table_infos");
         Iterator<String> iter = arrayList.iterator();
         try {
+    		Connection conn = getConn();
+    		Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
             while(iter.hasNext()){
             	str = iter.next();
             	strs = str.split("\\t");
