@@ -174,7 +174,7 @@ public class Conn2ASE {
 		Connection conn = getConn();
 		Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 		String str,sql,nameStr;
-		int sid;
+		int sid = 0;
         String dbTableName = "sysobjects";
         String[] strs = new String[2];
         fs = "/home/sybase/java_prac/src/sybase/tablesspec.txt";
