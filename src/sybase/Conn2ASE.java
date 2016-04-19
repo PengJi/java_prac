@@ -237,14 +237,6 @@ public class Conn2ASE {
 		}
 		return tables;
 	}
-	
-	/*
-	 * 向table_attributes插入列信息
-	 * @return 返回影响的行数
-	 */
-	public int insertColumns(){
-		
-	}
 
 	/*
 	 * 查询表备注
