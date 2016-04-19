@@ -124,22 +124,27 @@ public class Conn2MySQL{
 	}
 
 	/*
-	 * 插入一条表记录
+	 * 插入表记录和列记录
 	 * @param nameStr 表名
 	 * @param desStr 表的描述
+	 * @return 返回插入table_infos表中记录的id
 	 */
-	public int insertTable(String nameStr,String sid,String desStr){
+	public int insertTableCol(String nameStr,String sid,String desStr){
 		int n = 0;
 		try {
 			Connection conn = getConn();
 			Statement stmt = conn.createStatement(); //创建Statement对象
 			String sql2 = "INSERT INTO table_infos (name,sybid,description,created_at,updated_at) "
 					+ "VALUES (?,?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
-			PreparedStatement pst = conn.prepareStatement(sql2);
+			PreparedStatement pst = conn.prepareStatement(sql2,PreparedStatement.RETURN_GENERATED_KEYS);
 			pst.setString(1,nameStr);
 			pst.setString(2,sid);
 			pst.setString(3,desStr);
-			n = pst.executeUpdate();
+			pst.executeUpdate();
+			ResultSet rs = pst.getGeneratedKeys();
+			if(rs.next()){
+				n = rs.getInt(1);
+			}
 			
 			pst.close();
 	        stmt.close();

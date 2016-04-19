@@ -167,12 +167,10 @@ public class Conn2ASE {
 	
 	/*
 	 * 向table_infos插入表信息
-	 * @return 返回影响的行数
 	 */
-	public int insertTableSpec(){
+	public void insertTableSpec(){
 		int n=0;
 		String str,sql,nameStr;
-		int sid = 0;
         String dbTableName = "sysobjects";
         String[] strs = new String[2];
         fs = "/home/sybase/java_prac/src/sybase/tablesspec.txt";
@@ -188,23 +186,18 @@ public class Conn2ASE {
             while(iter.hasNext()){
             	str = iter.next();
             	strs = str.split("\\t");
-            	n = conn2MySQL.insertTable(strs[0], strs[1], null);
+            	n = conn2MySQL.insertTableCol(strs[0], strs[1], null);
             	sql = "select name from syscolumns where id = " + strs[1];
             	ResultSet rs = stmt.executeQuery(sql);
-            	ResultSet keyrs = stmt.getGeneratedKeys();
-            	if(keyrs.next()){
-            		sid = keyrs.getInt(1);
-            	}
             	while(rs.next()){
             		nameStr = rs.getString(1);
-            		conn2MySQL.insertAttr(nameStr, null, sid );
+            		conn2MySQL.insertAttr(nameStr, null, n );
             	}
             	if(n == 0) break;
             }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        return n;
 	}
 	
 	/*
