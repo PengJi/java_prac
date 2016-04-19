@@ -1,5 +1,9 @@
 import java.sql.*; 
 import java.util.*;
+import java.util.jar.Attributes.Name;
+
+import javax.naming.spi.DirStateFactory.Result;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -167,8 +171,11 @@ public class Conn2ASE {
 	 */
 	public int insertTableSpec(){
 		int n=0;
+		Connection conn = getConn();
+		Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+		String str,sql,nameStr;
+		int sid;
         String dbTableName = "sysobjects";
-        String str;
         String[] strs = new String[2];
         fs = "/home/sybase/java_prac/src/sybase/tablesspec.txt";
         String tableStrSpec = getTableSpec(dbTableName);
@@ -180,13 +187,24 @@ public class Conn2ASE {
         while(iter.hasNext()){
         	str = iter.next();
         	strs = str.split("\\t");
+        	n = conn2MySQL.insertTable(strs[0], strs[1], null);
+        	sql = "select name from syscolumns where id = " + strs[1];
+        	ResultSet rs = stmt.executeQuery(sql);
+        	ResultSet keyrs = stmt.getGeneratedKeys();
+        	if(keyrs.next()){
+        		sid = keyrs.getInt(1);
+        	}
+        	while(rs.next()){
+        		nameStr = rs.getString(1);
+        		conn2MySQL.insertAttr(nameStr, null, sid );
+        	}
+        	if(n == 0) break;
         }
-        n = conn2MySQL.insertTable(strs[0], strs[1], null);
         return n;
 	}
 	
 	/*
-	 * 查询表的字段
+	 * 查询表的所有字段
 	 * @param tableName 表名
 	 * @return 表字段
 	 */
@@ -213,8 +231,15 @@ public class Conn2ASE {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return tables;
+	}
+	
+	/*
+	 * 向table_attributes插入列信息
+	 * @return 返回影响的行数
+	 */
+	public int insertColumns(){
+		
 	}
 
 	/*
