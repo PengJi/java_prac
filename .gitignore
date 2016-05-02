@@ -1,2 +1,4 @@
 *.class
 *.bak
+/bin/
+/.apt_generated/
