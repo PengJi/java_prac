@@ -1,8 +1,7 @@
+package sybase;
+
 import java.sql.*; 
 import java.util.*;
-import java.util.jar.Attributes.Name;
-
-import javax.naming.spi.DirStateFactory.Result;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
