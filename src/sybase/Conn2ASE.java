@@ -1,8 +1,5 @@
 import java.sql.*; 
 import java.util.*;
-
-import javax.net.ssl.HostnameVerifier;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
