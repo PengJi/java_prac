@@ -1,5 +1,3 @@
-package sybase;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -302,7 +300,6 @@ public class Conn2MySQL{
         dbUser = "root";
         dbPasswd = "root";
         dbName = "test";
-        int n = 0;
         
         dbTableName = "table_infos";
         Conn2MySQL conn2MySQL = new Conn2MySQL(hostIP,portNum,dbUser, dbPasswd, dbName, dbTableName);
@@ -314,6 +311,7 @@ public class Conn2MySQL{
         */
         /*
         //插入一条表属性
+        int n = 0;
         n = insertAttr("属性1","jdbc测试属性",36);
         System.out.println(n);
         */

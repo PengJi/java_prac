@@ -1,5 +1,3 @@
-package sybase;
-
 import java.sql.*; 
 import java.util.*;
 
@@ -191,7 +189,10 @@ public class Conn2ASE {
         write(fs,tableStrSpec);
         read(fs);
         */
+        String dbTableName = "sysobjects";
+        String tableStrSpec = getTableSpec(dbTableName);
         //写入mysql
+		//Conn2MySQL conn2MySQL = new Conn2MySQL("192.168.101.8","3306","root","root","test","table_infos");
         Conn2MySQL conn2MySQL = new Conn2MySQL(host,port,user,passwd,database,tableName);
         Iterator<String> iter = arrayList.iterator();
         try {
