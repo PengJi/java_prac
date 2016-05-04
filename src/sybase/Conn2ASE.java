@@ -1,3 +1,5 @@
+package sybase;
+
 import java.sql.*; 
 import java.util.*;
 import java.io.BufferedOutputStream;
@@ -105,6 +107,7 @@ public class Conn2ASE {
 	 * @return 字符串，表的内容
 	 */
 	public String getTable(String tableName){
+		arrayList.clear();
 		String tables = "";
 		try {
 			Connection conn = getConn();
@@ -139,6 +142,7 @@ public class Conn2ASE {
 	 * @return 字符串，表的内容
 	 */
 	public String getTableSpec(String tableName){
+		
 		String tables = "";
 		try {
 			Connection conn = getConn();
