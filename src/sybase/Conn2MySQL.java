@@ -14,13 +14,17 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
 public class Conn2MySQL{
-	public static String dbUser = null;
-    public static String dbPasswd = null;
-    public static String dbName = null;
-    public static String dbTableName = null;
+	public static String hostIP = null; //数据库IP
+	public static String portNum = null; //数据库端口,如：3306
+	public static String dbUser = null; //数据库用户名，如：root
+    public static String dbPasswd = null; //数据库密码，如：root
+    public static String dbName = null; //数据库名，如：data-dictionary
+    public static String dbTableName = null; //数据库表名，如：table_infos
     public static String fs = null;
     
-    public Conn2MySQL(String user,String passwd,String name,String tableName){
+    public Conn2MySQL(String host,String port,String user,String passwd,String name,String tableName){
+    	hostIP = host;
+    	portNum = port;
     	dbUser = user;
     	dbPasswd = passwd;
     	dbName = name;
@@ -83,14 +87,14 @@ public class Conn2MySQL{
     }
     
     /*
-     * 得到数据库连接
+     * 获得数据库连接
      * @return 返回连接对象
      */
     public Connection getConn(){
     	Connection conn = null;
     	try {
     		Class.forName("com.mysql.jdbc.Driver");
-    		String url="jdbc:mysql://192.168.101.8:3306/" + dbName;    //JDBC的URL    
+    		String url="jdbc:mysql://" + hostIP + ":" + portNum + "/" + dbName;    //JDBC的URL    
     		conn = DriverManager.getConnection(url,dbUser,dbPasswd);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -128,6 +132,7 @@ public class Conn2MySQL{
 	/*
 	 * 插入表记录和列记录
 	 * @param nameStr 表名
+	 * @param sid sybase中该记录的id
 	 * @param desStr 表的描述
 	 * @return 返回插入table_infos表中记录的id
 	 */
@@ -139,9 +144,9 @@ public class Conn2MySQL{
 			String sql2 = "INSERT INTO table_infos (name,sybid,description,created_at,updated_at) "
 					+ "VALUES (?,?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)";
 			PreparedStatement pst = conn.prepareStatement(sql2,PreparedStatement.RETURN_GENERATED_KEYS);
-			pst.setString(1,nameStr);
-			pst.setString(2,sid);
-			pst.setString(3,desStr);
+			pst.setString(1,nameStr); //表名
+			pst.setString(2,sid); //ase中记录id
+			pst.setString(3,desStr); //标的描述
 			pst.executeUpdate();
 			ResultSet rs = pst.getGeneratedKeys();
 			if(rs.next()){
@@ -292,13 +297,15 @@ public class Conn2MySQL{
 	}
 
 	public static void main(String[] args){
+		hostIP = "192.168.101.8";
+		portNum = "3306";
         dbUser = "root";
         dbPasswd = "root";
         dbName = "test";
         int n = 0;
         
         dbTableName = "table_infos";
-        Conn2MySQL conn2MySQL = new Conn2MySQL(dbUser, dbPasswd, dbName, dbTableName);
+        Conn2MySQL conn2MySQL = new Conn2MySQL(hostIP,portNum,dbUser, dbPasswd, dbName, dbTableName);
         conn2MySQL.selectTable(dbTableName);
         /*
         //插入一条表记录

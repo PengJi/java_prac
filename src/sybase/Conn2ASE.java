@@ -3,6 +3,8 @@ package sybase;
 import java.sql.*; 
 import java.util.*;
 
+import javax.net.ssl.HostnameVerifier;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,13 +13,17 @@ import java.io.IOException;
 import java.io.BufferedInputStream;
 
 public class Conn2ASE {
-	public static String dbUser = null;
-	public static String dbPasswd = null;
-	public static String dbName = null;
+	public static String hostIP = null; //数据库地址，如：109.168.101.62
+	public static String portNum = null; //数据库端口，如：5000
+	public static String dbUser = null; //数据库用户名，如：sa
+	public static String dbPasswd = null; //数据库密码，如：jipeng1008
+	public static String dbName = null; //数据库表名，如：test
 	public static String fs = null;
     public static ArrayList<String> arrayList = new ArrayList<String>();
     
-    public Conn2ASE(String user,String passwd,String name){
+    public Conn2ASE(String host,String port,String user,String passwd,String name){
+    	hostIP = host;
+    	portNum = port;
     	dbUser = user;
     	dbPasswd = passwd;
     	dbName = name;
@@ -86,7 +92,8 @@ public class Conn2ASE {
 		Connection conn = null;
 		try {
 			Class.forName("com.sybase.jdbc4.jdbc.SybDriver").newInstance();
-			String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbName;
+			//String url = "jdbc:sybase:Tds:192.168.101.62:5000/" + dbName;
+			String url = "jdbc:sybase:Tds:"+ hostIP + ":" + portNum + "/" + dbName;
 			Properties sysProps = System.getProperties();
 			sysProps.put("user", dbUser); 
 			sysProps.put("password", dbPasswd);
@@ -143,8 +150,8 @@ public class Conn2ASE {
 			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			String sql = "select * from " + tableName; //查询表
 			ResultSet rs = stmt.executeQuery(sql);
-			ResultSetMetaData metaData=rs.getMetaData(); 
-			int columnSize = metaData.getColumnCount();//获取总的列数
+			//ResultSetMetaData metaData=rs.getMetaData(); 
+			//int columnSize = metaData.getColumnCount();//获取总的列数
 			String str = "";
 			while(rs.next()){
 				if(rs.getString(4).trim().equals("U")){
@@ -166,18 +173,26 @@ public class Conn2ASE {
 	
 	/*
 	 * 向table_infos插入表信息
+	 * @param host mysql数据库IP地址
+	 * @param port msyql数据库端口
+	 * @param user mysql用户名
+	 * @param passwd mysql密码
+	 * @param database mysql中要存储的数据库
+	 * @param tableName mysql中要存入的表
 	 */
-	public void insertTableSpec(){
+	public void insertTableSpec(String host,String port,String user,String passwd,String database,String tableName){
 		int n=0;
 		String str,sql,nameStr;
-        String dbTableName = "sysobjects";
         String[] strs = new String[2];
+        /*
+        String dbTableName = "sysobjects";
         fs = "/home/sybase/java_prac/src/sybase/tablesspec.txt";
         String tableStrSpec = getTableSpec(dbTableName);
         write(fs,tableStrSpec);
         read(fs);
+        */
         //写入mysql
-        Conn2MySQL conn2MySQL = new Conn2MySQL("root","root","test","table_infos");
+        Conn2MySQL conn2MySQL = new Conn2MySQL(host,port,user,passwd,database,tableName);
         Iterator<String> iter = arrayList.iterator();
         try {
     		Connection conn = getConn();
@@ -185,7 +200,7 @@ public class Conn2ASE {
             while(iter.hasNext()){
             	str = iter.next();
             	strs = str.split("\\t");
-            	n = conn2MySQL.insertTableCol(strs[0], strs[1], null);
+            	n = conn2MySQL.insertTableCol(strs[0], strs[1], null);//插入表名，ase中的记录id
             	sql = "select name from syscolumns where id = " + strs[1];
             	ResultSet rs = stmt.executeQuery(sql);
             	while(rs.next()){
@@ -232,7 +247,7 @@ public class Conn2ASE {
 
 	/*
 	 * 查询表备注
-	 * @param tableName 表名
+	 * @param tableName 得到表名
 	 * @return 表备注
 	 */
 	public String getTableComments(String tableName){
@@ -265,7 +280,14 @@ public class Conn2ASE {
     public static void main(String[] args) {
     	String dbTableName;
     	String fs;
-        Conn2ASE conn2ase = new Conn2ASE("sa", "jipeng1008", "test");
+    	
+    	hostIP = "192.168.101.62";
+    	portNum = "5000";
+    	dbUser = "sa";
+    	dbPasswd = "jipeng1008";
+    	dbName = "test";
+    	
+        Conn2ASE conn2ase = new Conn2ASE(hostIP,portNum,dbUser,dbPasswd,dbName);
 
 		//得到表信息
         dbTableName = "sysobjects";
@@ -285,10 +307,10 @@ public class Conn2ASE {
 		dbTableName = "syscomments";
 		fs = "/home/sybase/java_prac/src/sybase/tableComments.txt";
 		String tableComments = conn2ase.getTableComments(dbTableName);
-		conn2ase.write(fs,tableColumns);
+		conn2ase.write(fs,tableComments);
 		//conn2ase.read(fs);
 		
 		//插入表数据
-		conn2ase.insertTableSpec();
+		conn2ase.insertTableSpec("192.168.101.8","3306","root","root","test","table_infos");
     }
 }
